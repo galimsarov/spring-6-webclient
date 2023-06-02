@@ -12,4 +12,6 @@ interface BeerClient {
     fun listBeerDtos(): Flux<BeerDTO>
     fun getBeerById(id: String): Mono<BeerDTO>
     fun getBeerByBeerStyle(beerStyle: String): Flux<BeerDTO>
+    fun createBeer(beerDTO: BeerDTO): Mono<BeerDTO>
+    fun updateBeer(beerDTO: BeerDTO): Mono<BeerDTO>
 }
