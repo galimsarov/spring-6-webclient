@@ -109,4 +109,25 @@ class BeerClientImplTest {
         }
         await().untilTrue(atomicBoolean)
     }
+
+    @Test
+    fun testPatch() {
+        val name = "New Name"
+        val atomicBoolean = AtomicBoolean(false)
+
+        client.listBeerDtos().next().doOnNext { it.beerName = name }.flatMap { client.patchBeer(it) }.subscribe {
+            println(it.toString())
+            atomicBoolean.set(true)
+        }
+        await().untilTrue(atomicBoolean)
+    }
+
+    @Test
+    fun testDelete() {
+        val atomicBoolean = AtomicBoolean(false)
+
+        client.listBeerDtos().next().flatMap { client.deleteBeer(it) }.doOnSuccess { atomicBoolean.set(true) }
+            .subscribe()
+        await().untilTrue(atomicBoolean)
+    }
 }

@@ -41,13 +41,25 @@ class BeerClientImpl(webClientBuilder: WebClient.Builder) : BeerClient {
 
     override fun createBeer(beerDTO: BeerDTO): Mono<BeerDTO> {
         return webClient.post().uri(BEER_PATH).body(Mono.just(beerDTO), BeerDTO::class.java).retrieve()
-            .toBodilessEntity().flatMap { Mono.just(it.headers["Location"]!![0]) }
-            .map { it.split("/")[it.split("/").size - 1] }.flatMap(::getBeerById)
+            .toBodilessEntity()
+            .flatMap { Mono.just(it.headers["Location"]!![0]) }
+            .map { it.split("/")[it.split("/").size - 1] }
+            .flatMap(::getBeerById)
     }
 
     override fun updateBeer(beerDTO: BeerDTO): Mono<BeerDTO> {
         return webClient.put().uri { it.path(BEER_PATH_ID).build(beerDTO.id) }
             .body(Mono.just(beerDTO), BeerDTO::class.java).retrieve().toBodilessEntity()
             .flatMap { getBeerById(beerDTO.id) }
+    }
+
+    override fun patchBeer(beerDTO: BeerDTO): Mono<BeerDTO> {
+        return webClient.patch().uri { it.path(BEER_PATH_ID).build(beerDTO.id) }
+            .body(Mono.just(beerDTO), BeerDTO::class.java).retrieve().toBodilessEntity()
+            .flatMap { getBeerById(beerDTO.id) }
+    }
+
+    override fun deleteBeer(beerDTO: BeerDTO): Mono<Void> {
+        return webClient.delete().uri { it.path(BEER_PATH_ID).build(beerDTO.id) }.retrieve().toBodilessEntity().then()
     }
 }
