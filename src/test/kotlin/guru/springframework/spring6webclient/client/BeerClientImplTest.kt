@@ -54,4 +54,26 @@ class BeerClientImplTest {
         }
         await().untilTrue(atomicBoolean)
     }
+
+    @Test
+    fun testGetBeerById() {
+        val atomicBoolean = AtomicBoolean(false)
+
+        client.listBeerDtos().flatMap { client.getBeerById(it.id) }.subscribe {
+            println(it.beerName)
+            atomicBoolean.set(true)
+        }
+        await().untilTrue(atomicBoolean)
+    }
+
+    @Test
+    fun testGetBeerByBeerStyle() {
+        val atomicBoolean = AtomicBoolean(false)
+
+        client.getBeerByBeerStyle("Pale Ale").subscribe {
+            println(it.toString())
+            atomicBoolean.set(true)
+        }
+        await().untilTrue(atomicBoolean)
+    }
 }
